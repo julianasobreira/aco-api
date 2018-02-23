@@ -24,7 +24,7 @@ import java.net.URI;
  * Root resource (exposed at "myresource" path)
  */
 @Path("/api/v1.0")
-@Produces(MediaType.APPLICATION_JSON)
+@Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class MyResource {
     // Repositórios
     private static List<Disciplina> resources = new ArrayList<Disciplina>();
