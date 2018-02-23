@@ -20,10 +20,10 @@ public class Disciplina {
   private String nome;
   private String nomeCurso;
   private int cargaHoraria;
-  private ArrayList<String> preRequisitos = new ArrayList<>();
-  private ArrayList<String> coRequisitos = new ArrayList<>();
-  private ArrayList<String> proRequisitos = new ArrayList<>();
-  private ArrayList<String> equivalencias = new ArrayList<>();
+  private ArrayList<String> preRequisitos = new ArrayList<String>();
+  private ArrayList<String> coRequisitos = new ArrayList<String>();
+  private ArrayList<String> proRequisitos = new ArrayList<String>();
+  private ArrayList<String> equivalencias = new ArrayList<String>();
   private int periodo;
   private LocalDateTime createdTime;
 }

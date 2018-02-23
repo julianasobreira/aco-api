@@ -27,7 +27,7 @@ import java.net.URI;
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class MyResource {
     // Repositórios
-    private static List<Disciplina> resources = new ArrayList<>();
+    private static List<Disciplina> resources = new ArrayList<Disciplina>();
     private CursoRepository cursoRepo = new CursoRepository();
     private DisciplinaRepository disciplinaRepo = new DisciplinaRepository();
     private HorarioRepository horarioRepo = new HorarioRepository();
@@ -43,9 +43,9 @@ public class MyResource {
     private int gama = 50;
     private static int cargaHorariaCursada;
     private static int cargaHorariaTotal = 4290;
-    private static ArrayList <Disciplina> disciplinasCursadas = new ArrayList<>();
-    private static ArrayList <Disciplina> todasDisciplinas = new ArrayList<>();
-    private static ArrayList <Horario> ofertaDisciplinas = new ArrayList<>();
+    private static ArrayList <Disciplina> disciplinasCursadas = new ArrayList<Disciplina>();
+    private static ArrayList <Disciplina> todasDisciplinas = new ArrayList<Disciplina>();
+    private static ArrayList <Horario> ofertaDisciplinas = new ArrayList<Horario>();
     private static ArrayList <CompSolucao> solucao = new ArrayList<CompSolucao>();
 
     @POST

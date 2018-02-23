@@ -20,7 +20,7 @@ public class HorarioRepository {
   }
 
   public ArrayList<Horario> findAll(String curso, String semestre) {
-    ArrayList<Horario> ofertas = new ArrayList<>();
+    ArrayList<Horario> ofertas = new ArrayList<Horario>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
                  "disciplinas.nr_periodo, disciplinas.id_disciplina, " + 
                  "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
