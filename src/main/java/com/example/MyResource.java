@@ -208,7 +208,6 @@ public class MyResource {
     }
 
     @GET
-    @Produces(MediaType.APPLICATION_JSON)
     @Path("/oferta")
     public ArrayList<Horario> getOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
         try {
