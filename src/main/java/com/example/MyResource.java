@@ -1,4 +1,4 @@
-package com.univasf;
+package com.example;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -8,14 +8,14 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Context;
-
 import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
+
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Context;
 
 import java.util.*;
 import java.net.URI;

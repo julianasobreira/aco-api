@@ -1,4 +1,4 @@
-package com.univasf;
+package com.example;
 
 import java.sql.*;
 
