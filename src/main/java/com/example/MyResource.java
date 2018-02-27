@@ -64,32 +64,40 @@ public class MyResource {
 
     @POST
     @Path("/solucao")
-    public ArrayList<CompSolucao> getSolucao(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre, ArrayList<Disciplina> cursadas) {
-        int cho = 0;
-        disciplinasCursadas = cursadas;
-        todasDisciplinas = disciplinaRepo.findAll(curso);
-        ofertaDisciplinas = horarioRepo.findAll(curso, semestre);
-        ArrayList<Disciplina> disciplinasPossiveis = obterDisciplinasPossiveis();
-        ArrayList<Horario> horariosPossiveis = obterHorariosPossiveis(disciplinasPossiveis);
-        for(int i=0;i<disciplinasCursadas.size();i++)
-            if(disciplinasCursadas.get(i).getPeriodo() == 0) 
-                cho+=disciplinasCursadas.get(i).getCargaHoraria();
-        AntColonyOptimization ACO = new AntColonyOptimization(
-            horariosPossiveis,
-            todasDisciplinas,
-            feromonioInicial, 
-            alfa, 
-            beta, 
-            quantidadeMaximaIteracoes, 
-            quantidadeFormigas, 
-            evaporacao, 
-            ganho, 
-            gama, 
-            cho
-        );
-        solucao = ACO.melhorGrade();
+    public ArrayList<Horario> getSolucao(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre, ArrayList<Disciplina> cursadas) {   
         try {
-            return solucao;
+            int cho = 0;
+            disciplinasCursadas = cursadas;
+            todasDisciplinas = disciplinaRepo.findAll(curso);
+            ofertaDisciplinas = horarioRepo.findAll(curso, semestre);
+            ArrayList<Disciplina> disciplinasPossiveis = obterDisciplinasPossiveis();
+            ArrayList<Horario> horariosPossiveis = obterHorariosPossiveis(disciplinasPossiveis);
+            for(int i=0;i<disciplinasCursadas.size();i++)
+                if(disciplinasCursadas.get(i).getPeriodo() == 0) 
+                    cho+=disciplinasCursadas.get(i).getCargaHoraria();
+            AntColonyOptimization ACO = new AntColonyOptimization(
+                horariosPossiveis,
+                todasDisciplinas,
+                feromonioInicial, 
+                alfa, 
+                beta, 
+                quantidadeMaximaIteracoes, 
+                quantidadeFormigas, 
+                evaporacao, 
+                ganho, 
+                gama, 
+                cho
+            );
+            solucao = ACO.melhorGrade();
+            ArrayList<Horario> gradePersonalizada = new ArrayList<Horario>();
+            for(CompSolucao solucaoItem : solucao) {
+                for(Horario oferta : ofertaDisciplinas) {
+                    if (solucaoItem.getDisciplina().getCodDisciplina().equals(oferta.getCodDisciplina())) {
+                        gradePersonalizada.add(oferta);
+                    }
+                }
+            }
+            return gradePersonalizada;
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
