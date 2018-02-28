@@ -22,7 +22,7 @@ public class HorarioRepository {
   public ArrayList<Horario> findAll(String curso, String semestre) {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
-                 "disciplinas.nr_periodo, disciplinas.id_disciplina, " + 
+                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo" + 
                  "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
                  "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas " +
                  "from disciplinas INNER JOIN ofertas ON " + 
@@ -38,14 +38,15 @@ public class HorarioRepository {
         disciplina.setCargaHoraria(rs.getInt(3));
         disciplina.setPeriodo(rs.getInt(4));
         disciplina.setCodDisciplina(rs.getString(5));
+        disciplina.setCiclo(rs.getString(6));
 
         Horario oferta = new Horario();
-        oferta.setCodOferta(rs.getString(6));
-        oferta.setNomeCurso(rs.getString(7));
-        oferta.setCodDisciplina(rs.getString(8));
-        oferta.setDia(rs.getString(9));
-        oferta.setHorarioInicial(rs.getInt(10));
-        oferta.setDuracaoHoras(rs.getInt(11));
+        oferta.setCodOferta(rs.getString(7));
+        oferta.setNomeCurso(rs.getString(8));
+        oferta.setCodDisciplina(rs.getString(9));
+        oferta.setDia(rs.getString(10));
+        oferta.setHorarioInicial(rs.getInt(11));
+        oferta.setDuracaoHoras(rs.getInt(12));
         oferta.setDisciplinaOfertada(disciplina);
         ofertas.add(oferta);
       }

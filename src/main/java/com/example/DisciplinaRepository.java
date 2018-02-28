@@ -22,7 +22,7 @@ public class DisciplinaRepository {
   public ArrayList<Disciplina> findAll(String curso) {
     HashMap<String, Disciplina> disciplinasMap = new HashMap<String, Disciplina>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
-                 "disciplinas.nr_periodo, disciplinas.id_disciplina, " + 
+                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo" + 
                  "dependencias.ds_tipo, dependencias.id_disciplina_dependencia " +
                  "from disciplinas LEFT JOIN dependencias ON dependencias.id_disciplina=disciplinas.id_disciplina " + 
                  "WHERE disciplinas.ds_nome_curso='" + curso + "'";
@@ -40,10 +40,11 @@ public class DisciplinaRepository {
           disciplina.setCargaHoraria(rs.getInt(3));
           disciplina.setPeriodo(rs.getInt(4));
           disciplina.setCodDisciplina(codDisciplina);
+          disciplina.setCiclo(rs.getString(6));
           disciplinasMap.put(codDisciplina, disciplina);
         }
-        String tipoDpendencia = rs.getString(6);
-        String codDisciplinaDependencia = rs.getString(7);
+        String tipoDpendencia = rs.getString(7);
+        String codDisciplinaDependencia = rs.getString(8);
         if (Objects.equals(tipoDpendencia, "eq")) {
           disciplinasMap.get(codDisciplina).getEquivalencias().add(codDisciplinaDependencia);
           disciplinasMap.put(codDisciplina, disciplinasMap.get(codDisciplina));
@@ -66,8 +67,8 @@ public class DisciplinaRepository {
   }
 
   public void create(ArrayList<Disciplina> disciplinas, String curso) {
-    String sql = "insert into disciplinas (ds_nome, ds_nome_curso, nr_carga_horaria, nr_periodo, id_disciplina) " +
-                 "values(?, ?, ?, ?, ?)";
+    String sql = "insert into disciplinas (ds_nome, ds_nome_curso, nr_carga_horaria, nr_periodo, id_disciplina, ds_ciclo) " +
+                 "values(?, ?, ?, ?, ?, ?)";
     String sqlDepencia = "insert into dependencias (ds_tipo, id_disciplina, id_disciplina_dependencia) " +
                  "values(?, ?, ?)";
     try { 
@@ -81,6 +82,7 @@ public class DisciplinaRepository {
         st.setInt(3, disciplina.getCargaHoraria());
         st.setInt(4, disciplina.getPeriodo());
         st.setString(5, disciplina.getCodDisciplina());
+        st.setString(6, disciplina.getCiclo());
         st.executeUpdate();
       }
 
