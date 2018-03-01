@@ -22,7 +22,7 @@ public class DisciplinaRepository {
   public ArrayList<Disciplina> findAll(String curso) {
     HashMap<String, Disciplina> disciplinasMap = new HashMap<String, Disciplina>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
-                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo" + 
+                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
                  "dependencias.ds_tipo, dependencias.id_disciplina_dependencia " +
                  "from disciplinas LEFT JOIN dependencias ON dependencias.id_disciplina=disciplinas.id_disciplina " + 
                  "WHERE disciplinas.ds_nome_curso='" + curso + "'";
