@@ -3,7 +3,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.example</groupId>
+    <groupId>com.aco</groupId>
     <artifactId>simple-heroku-webapp</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>

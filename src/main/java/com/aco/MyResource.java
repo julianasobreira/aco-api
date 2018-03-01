@@ -1,4 +1,4 @@
-package com.example;
+package com.aco;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,6 +19,9 @@ import javax.ws.rs.core.Context;
 
 import java.util.*;
 import java.net.URI;
+
+import com.aco.Repositories.*;
+import com.aco.Entities.*;
 
 /**
  * Root resource (exposed at "myresource" path)
