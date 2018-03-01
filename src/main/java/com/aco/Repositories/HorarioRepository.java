@@ -22,7 +22,7 @@ public class HorarioRepository {
   public ArrayList<Horario> findAll(String curso, String semestre) {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
-                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo" + 
+                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
                  "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
                  "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas " +
                  "from disciplinas INNER JOIN ofertas ON " + 
