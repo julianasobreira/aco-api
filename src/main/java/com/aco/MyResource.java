@@ -22,6 +22,7 @@ import java.net.URI;
 
 import com.aco.repositories.*;
 import com.aco.entities.*;
+import com.aco.auth.Secured;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -244,6 +245,7 @@ public class MyResource {
         
     }
 
+    @Secured
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getIt() {

@@ -27,6 +27,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.crypto.spec.SecretKeySpec;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Claims;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -75,4 +76,16 @@ public class LoginResource {
       .setExpiration(expira.getTime());
     return construtor.compact();//Constrói o token retornando ele como uma String
   }
+
+  public Claims validaToken(String token) {
+    try{
+      Claims claims = Jwts.parser()
+        .setSigningKey(DatatypeConverter.parseBase64Binary(FRASE_SEGREDO))
+        .parseClaimsJws(token).getBody();
+        System.out.println(claims.getIssuer());
+        return claims;
+      } catch(Exception ex) {
+        throw ex;
+      }
+    }
 }
