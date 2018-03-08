@@ -20,8 +20,8 @@ import javax.ws.rs.core.Context;
 import java.util.*;
 import java.net.URI;
 
-import com.aco.Repositories.*;
-import com.aco.Entities.*;
+import com.aco.repositories.*;
+import com.aco.entities.*;
 
 /**
  * Root resource (exposed at "myresource" path)
