@@ -19,6 +19,22 @@ public class HorarioRepository {
     }
   }
 
+  public ArrayList<String> findSemestersByCourse(String curso) {
+    String sql = "SELECT ds_oferta_semestre FROM ofertas WHERE ds_nome_curso='" + curso +
+                "' GROUP BY ds_oferta_semestre";
+    try {
+      ArrayList<String> semestres = new ArrayList<String>();
+      Statement st = con.createStatement();
+      ResultSet rs = st.executeQuery(sql);
+      while (rs.next()) {
+        semestres.add(rs.getString(1));
+      }
+      return semestres;
+    } catch (Exception e) {
+      System.out.println(e);
+      throw new java.lang.Error(e);
+    }
+  }
   public ArrayList<Horario> findAll(String curso, String semestre) {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
     String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 

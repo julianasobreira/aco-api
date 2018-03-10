@@ -38,13 +38,11 @@ public class LoginResource {
   String FRASE_SEGREDO = "FRASE_SEGREDO";
   @POST
   @Path("/login")
-  public Response login(String credentialJson) {
+  public Response login(Credential credential) {
     try {
-      Gson gson = new Gson();
-      Credential credencial = gson.fromJson(credentialJson, Credential.class);
-      validarCrendenciais(credencial);
+      validarCrendenciais(credential);
 
-      String token = gerarToken(credencial.getLogin(),1);
+      String token = gerarToken(credential.getLogin(),1);
       return Response.ok(token).build();
     } catch (Exception e) {
       e.printStackTrace();

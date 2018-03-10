@@ -16,6 +16,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.GenericEntity;
 
 import java.util.*;
 import java.net.URI;
@@ -24,12 +25,9 @@ import com.aco.repositories.*;
 import com.aco.entities.*;
 import com.aco.auth.Secured;
 
-/**
- * Root resource (exposed at "myresource" path)
- */
 @Path("/api/v1.0")
 @Produces(MediaType.APPLICATION_JSON)
-public class MyResource {
+public class ACOResource {
     // Repositórios
     private static List<Disciplina> resources = new ArrayList<Disciplina>();
     private CursoRepository cursoRepo = new CursoRepository();
@@ -245,7 +243,19 @@ public class MyResource {
         
     }
 
-    @Secured
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/oferta/semestre")
+    public String getSemeters(@QueryParam("curso") String curso) {
+        try {
+            JSONObject jObject = new JSONObject();
+            jObject.put("semesters", horarioRepo.findSemestersByCourse(curso));
+            return jObject.toString();
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+    }
+
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public String getIt() {
