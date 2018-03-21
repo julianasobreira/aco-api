@@ -3,6 +3,7 @@ package com.aco.repositories;
 import java.sql.*;
 import java.util.ArrayList;
 import com.aco.entities.Horario;
+import com.aco.entities.Disciplina;
 
 public class HorarioRepository {
   Connection con = null;
