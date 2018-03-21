@@ -1,8 +1,8 @@
 package com.aco.repositories;
 
 import java.sql.*;
-
 import java.util.*;
+import com.aco.entities.Disciplina;
 
 public class DisciplinaRepository {
   Connection con = null;

@@ -1,8 +1,8 @@
 package com.aco.repositories;
 
 import java.sql.*;
-
 import java.util.ArrayList;
+import com.aco.entities.Horario;
 
 public class HorarioRepository {
   Connection con = null;
