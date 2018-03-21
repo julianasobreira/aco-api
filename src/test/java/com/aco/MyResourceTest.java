@@ -10,11 +10,11 @@ import static org.junit.Assert.assertEquals;
 
 import com.aco.ACOResource;
 
-public class ACOResourceTest extends JerseyTest {
+public class MyResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        return new ResourceConfig(MyResource.class);
+        return new ResourceConfig(ACOResource.class);
     }
 
     /**
