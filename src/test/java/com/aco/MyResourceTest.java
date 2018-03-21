@@ -8,9 +8,9 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
-import com.aco.MyResource;
+import com.aco.ACOResource;
 
-public class MyResourceTest extends JerseyTest {
+public class ACOResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
