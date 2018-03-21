@@ -1,4 +1,4 @@
-package com.aco;
+package com.aco.repositories;
 
 import java.sql.*;
 
