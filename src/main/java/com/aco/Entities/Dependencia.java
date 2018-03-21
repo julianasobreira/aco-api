@@ -1,4 +1,4 @@
-package com.aco;
+package com.aco.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
