@@ -6,6 +6,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Encoded;
 import javax.ws.rs.WebApplicationException;
 
 import org.codehaus.jettison.json.JSONArray;
@@ -20,6 +22,8 @@ import javax.ws.rs.core.GenericEntity;
 
 import java.util.*;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.net.URLDecoder;
 
 import com.aco.repositories.*;
 import com.aco.entities.*;
@@ -194,6 +198,26 @@ public class ACOResource {
     }
 
     @GET
+    @Encoded
+    @Path("/curso/{nome}")
+    public String getCurso(@PathParam("nome") String nome) {
+        try {
+            System.out.println("=========");
+            System.out.println(nome);
+            String result = URLEncoder.encode(nome, "UTF-8");
+            System.out.println(result);
+            // ArrayList<Disciplina> classes = disciplinaRepo.findAll(curso);
+            // ArrayList<String> semesters = horarioRepo.findSemestersByCourse(curso);
+            // JSONObject jObject = new JSONObject();
+            // jObject.put("semesters", semesters);
+            // jObject.put("classes", classes);
+            return "teste";
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+    }
+
+    @GET
     @Path("/grade")
     public ArrayList<Disciplina> getGrade(@QueryParam("curso") String curso) {
         try {
@@ -243,6 +267,9 @@ public class ACOResource {
         
     }
 
+    /**
+     * Examples
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/oferta/semestre")
