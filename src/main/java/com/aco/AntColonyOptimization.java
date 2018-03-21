@@ -2,8 +2,10 @@ package com.aco;
 
 import java.util.ArrayList;
 import java.util.Random;
-
 import org.jfree.data.category.DefaultCategoryDataset;
+import com.aco.entities.Disciplina;
+import com.aco.entities.Horario;
+import com.aco.entities.CompSolucao;
 
 public class AntColonyOptimization {
     private ArrayList < Horario > horariosPossiveis = new ArrayList < Horario > ();
