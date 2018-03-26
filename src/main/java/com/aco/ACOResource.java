@@ -197,20 +197,17 @@ public class ACOResource {
     }
 
     @GET
-    @Encoded
-    @Path("/curso/{nome}")
-    public String getCurso(@PathParam("nome") String nome) {
+    @Path("/curso")
+    public Response getCurso(@QueryParam("nome") String nome) {
         try {
-            System.out.println("=========");
-            System.out.println(nome);
-            String result = URLEncoder.encode(nome, "UTF-8");
-            System.out.println(result);
-            // ArrayList<Disciplina> classes = disciplinaRepo.findAll(curso);
-            // ArrayList<String> semesters = horarioRepo.findSemestersByCourse(curso);
-            // JSONObject jObject = new JSONObject();
-            // jObject.put("semesters", semesters);
-            // jObject.put("classes", classes);
-            return "teste";
+            Curso curso = new Curso();
+            ArrayList<Disciplina> disciplinas = disciplinaRepo.findAll(nome);
+            ArrayList<String> semestres = horarioRepo.findSemestersByCourse(nome);
+            curso.setSemestres(semestres);
+            curso.setDisciplinas(disciplinas);
+            return Response.status(Response.Status.OK)
+                .entity(curso)
+                .build();
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
