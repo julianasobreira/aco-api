@@ -1,6 +1,8 @@
 package com.aco.repositories;
 
 import java.sql.*;
+import java.time.*;
+import java.util.TimeZone ;
 import java.util.ArrayList;
 import com.aco.entities.Horario;
 import com.aco.entities.Disciplina;
@@ -36,18 +38,33 @@ public class HorarioRepository {
       throw new java.lang.Error(e);
     }
   }
+
   public ArrayList<Horario> findAll(String curso, String semestre) {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
-    String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
-                 "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
-                 "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
-                 "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas " +
-                 "from disciplinas INNER JOIN ofertas ON " + 
-                 "ofertas.id_disciplina=disciplinas.id_disciplina " + 
-                 "WHERE ofertas.ds_nome_curso='" + curso + "' AND ofertas.ds_oferta_semestre='" + semestre + "'";
+    String query = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
+                   "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
+                   "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
+                   "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas, ofertas.ds_oferta_semestre, ofertas.created_at " +
+                   "from disciplinas INNER JOIN ofertas ON " + 
+                   "ofertas.id_disciplina=disciplinas.id_disciplina ";
+    ArrayList<String> conditions = new ArrayList<String>();
+
+    if (curso != null) {
+      conditions.add("ofertas.ds_nome_curso='" + curso + "'");
+    }
+
+    if (semestre != null) {
+      conditions.add("ofertas.ds_oferta_semestre='" + semestre + "'");
+    }
+
+    if (curso != null || semestre != null) {
+      query = query + "WHERE " + String.join(" AND ", conditions);
+    }
+
+    System.out.println(query);
     try { 
       Statement st = con.createStatement();
-      ResultSet rs = st.executeQuery(sql);
+      ResultSet rs = st.executeQuery(query);
       while (rs.next()) {
         Disciplina disciplina = new Disciplina();
         disciplina.setNome(rs.getString(1));
@@ -64,6 +81,8 @@ public class HorarioRepository {
         oferta.setDia(rs.getString(10));
         oferta.setHorarioInicial(rs.getInt(11));
         oferta.setDuracaoHoras(rs.getInt(12));
+        oferta.setSemestre(rs.getString(13));
+        oferta.setCreatedTime(rs.getTimestamp(14).toLocalDateTime());
         oferta.setDisciplinaOfertada(disciplina);
         ofertas.add(oferta);
       }

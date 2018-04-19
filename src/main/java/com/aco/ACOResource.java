@@ -247,7 +247,7 @@ public class ACOResource {
         }
     }
 
-    @POST
+    @POST  
     @Path("/oferta")
     public Response createOferta(@Context UriInfo uriInfo, ArrayList<Horario> ofertas) {
         String curso = uriInfo.getQueryParameters().getFirst("curso");
@@ -261,22 +261,6 @@ public class ACOResource {
             throw new WebApplicationException(Response.Status.CONFLICT);
        }
         
-    }
-
-    /**
-     * Examples
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/oferta/semestre")
-    public String getSemeters(@QueryParam("curso") String curso) {
-        try {
-            JSONObject jObject = new JSONObject();
-            jObject.put("semesters", horarioRepo.findSemestersByCourse(curso));
-            return jObject.toString();
-        } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
-        }
     }
 
     @GET
