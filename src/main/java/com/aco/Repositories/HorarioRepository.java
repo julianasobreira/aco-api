@@ -94,11 +94,11 @@ public class HorarioRepository {
   }
 
   public void create(ArrayList<Horario> ofertas, String curso, String semestre) {
-    String sql = "insert into ofertas (cod_oferta, id_disciplina, ds_dia, ds_oferta_semestre, nr_horario_inicial, nr_duracao_horas, ds_nome_curso) " + 
+    String query = "insert into ofertas (cod_oferta, id_disciplina, ds_dia, ds_oferta_semestre, nr_horario_inicial, nr_duracao_horas, ds_nome_curso) " + 
     "values(?, ?, ?, ?, ?, ?, ?)";
 
     try {
-      PreparedStatement st = con.prepareStatement(sql);
+      PreparedStatement st = con.prepareStatement(query);
 
       for(Horario oferta : ofertas) {
         st.setString(1, oferta.getCodOferta());
@@ -110,6 +110,20 @@ public class HorarioRepository {
         st.setString(7, curso);
         st.executeUpdate();
       }
+    } catch (Exception e) {
+      System.out.println(e);
+      throw new java.lang.Error(e);
+    }
+  }
+
+  public void delete(String curso, String semestre) {
+    String query = "DELETE FROM ofertas WHERE ofertas.ds_nome_curso=? AND ofertas.ds_oferta_semestre=?";
+
+    try {
+      PreparedStatement st = con.prepareStatement(query);
+      st.setString(1, curso);
+      st.setString(2, semestre);
+      st.executeUpdate();
     } catch (Exception e) {
       System.out.println(e);
       throw new java.lang.Error(e);

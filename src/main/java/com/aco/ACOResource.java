@@ -2,6 +2,7 @@ package com.aco;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Consumes;
@@ -242,6 +243,22 @@ public class ACOResource {
     public ArrayList<Horario> getOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
         try {
             return horarioRepo.findAll(curso, semestre);
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+    }
+
+    @DELETE
+    @Path("/oferta")
+    public Response deleteOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
+        try {
+            System.out.println(curso);
+            System.out.println(semestre);
+
+            horarioRepo.delete(curso, semestre);
+            return Response
+               .status(200)
+               .build();
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
