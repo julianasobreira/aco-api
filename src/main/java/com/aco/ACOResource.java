@@ -63,7 +63,7 @@ public class ACOResource {
                .status(Response.Status.OK)
                .build();
        } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
        }
         
     }
@@ -105,7 +105,7 @@ public class ACOResource {
             }
             return gradePersonalizada;
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -211,7 +211,7 @@ public class ACOResource {
                 .entity(curso)
                 .build();
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -221,7 +221,7 @@ public class ACOResource {
         try {
             return disciplinaRepo.findAll(curso);
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -229,12 +229,24 @@ public class ACOResource {
     @Path("/grade")
     public Response createGrade(@QueryParam("curso") String curso, ArrayList<Disciplina> disciplinas) {
         try {
+            ArrayList<Disciplina> grade = disciplinaRepo.findAll(curso);
+            if (!grade.isEmpty()) {
+                JSONObject msgError = new JSONObject();
+                msgError.put("code", "409");
+                msgError.put("detail", "Já existe uma grade curricular adicionada para o curso.");
+
+                return Response
+                   .status(Response.Status.CONFLICT)
+                   .entity(msgError.toString())
+                   .build();
+            }
+
             disciplinaRepo.create(disciplinas, curso);
             return Response
                .status(Response.Status.OK)
                .build();
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
         
     }
@@ -245,7 +257,7 @@ public class ACOResource {
         try {
             return horarioRepo.findAll(curso, semestre);
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -261,7 +273,7 @@ public class ACOResource {
                .status(Response.Status.OK)
                .build();
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -273,9 +285,13 @@ public class ACOResource {
         try {
             ArrayList<Horario> horarios = horarioRepo.findAll(curso, semestre);
             if (!horarios.isEmpty()) {
+                JSONObject msgError = new JSONObject();
+                msgError.put("code", "409");
+                msgError.put("detail", "Já existe uma oferta criada para o semestre.");
+
                 return Response
                    .status(Response.Status.CONFLICT)
-                   .entity("Entity already exists".toString())
+                   .entity(msgError.toString())
                    .build();
             }
             horarioRepo.create(ofertas, curso, semestre);
@@ -283,7 +299,7 @@ public class ACOResource {
                .status(200)
                .build();
        } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.CONFLICT);
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
        }
         
     }
