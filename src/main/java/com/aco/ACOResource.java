@@ -60,7 +60,7 @@ public class ACOResource {
         try {
             cursoRepo.create(curso);
             return Response
-               .status(200)
+               .status(Response.Status.OK)
                .build();
        } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
@@ -206,7 +206,8 @@ public class ACOResource {
             ArrayList<String> semestres = horarioRepo.findSemestersByCourse(nome);
             curso.setSemestres(semestres);
             curso.setDisciplinas(disciplinas);
-            return Response.status(Response.Status.OK)
+            return Response
+                .status(Response.Status.OK)
                 .entity(curso)
                 .build();
         } catch (Exception e) {
@@ -230,7 +231,7 @@ public class ACOResource {
         try {
             disciplinaRepo.create(disciplinas, curso);
             return Response
-               .status(200)
+               .status(Response.Status.OK)
                .build();
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
@@ -257,7 +258,7 @@ public class ACOResource {
 
             horarioRepo.delete(curso, semestre);
             return Response
-               .status(200)
+               .status(Response.Status.OK)
                .build();
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.CONFLICT);
@@ -270,6 +271,13 @@ public class ACOResource {
         String curso = uriInfo.getQueryParameters().getFirst("curso");
         String semestre = uriInfo.getQueryParameters().getFirst("semestre");
         try {
+            ArrayList<Horario> horarios = horarioRepo.findAll(curso, semestre);
+            if (!horarios.isEmpty()) {
+                return Response
+                   .status(Response.Status.CONFLICT)
+                   .entity("Entity already exists".toString())
+                   .build();
+            }
             horarioRepo.create(ofertas, curso, semestre);
             return Response
                .status(200)

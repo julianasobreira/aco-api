@@ -61,7 +61,6 @@ public class HorarioRepository {
       query = query + "WHERE " + String.join(" AND ", conditions);
     }
 
-    System.out.println(query);
     try { 
       Statement st = con.createStatement();
       ResultSet rs = st.executeQuery(query);
