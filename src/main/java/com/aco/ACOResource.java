@@ -265,9 +265,6 @@ public class ACOResource {
     @Path("/oferta")
     public Response deleteOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
         try {
-            System.out.println(curso);
-            System.out.println(semestre);
-
             horarioRepo.delete(curso, semestre);
             return Response
                .status(Response.Status.OK)

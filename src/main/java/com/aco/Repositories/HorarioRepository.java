@@ -43,14 +43,14 @@ public class HorarioRepository {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
     String query = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
                    "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
-                   "ofertas.cod_oferta, ofertas.ds_nome_curso, ofertas.id_disciplina, ofertas.ds_dia, " +
+                   "ofertas.cod_oferta, ofertas.id_disciplina, ofertas.ds_dia, " +
                    "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas, ofertas.ds_oferta_semestre, ofertas.created_at " +
                    "from disciplinas INNER JOIN ofertas ON " + 
                    "ofertas.id_disciplina=disciplinas.id_disciplina ";
     ArrayList<String> conditions = new ArrayList<String>();
 
     if (curso != null) {
-      conditions.add("ofertas.ds_nome_curso='" + curso + "'");
+      conditions.add("disciplinas.ds_nome_curso='" + curso + "'");
     }
 
     if (semestre != null) {
@@ -75,13 +75,13 @@ public class HorarioRepository {
 
         Horario oferta = new Horario();
         oferta.setCodOferta(rs.getString(7));
-        oferta.setNomeCurso(rs.getString(8));
-        oferta.setCodDisciplina(rs.getString(9));
-        oferta.setDia(rs.getString(10));
-        oferta.setHorarioInicial(rs.getInt(11));
-        oferta.setDuracaoHoras(rs.getInt(12));
-        oferta.setSemestre(rs.getString(13));
-        oferta.setCreatedTime(rs.getTimestamp(14).toLocalDateTime());
+        oferta.setNomeCurso(rs.getString(2));
+        oferta.setCodDisciplina(rs.getString(8));
+        oferta.setDia(rs.getString(9));
+        oferta.setHorarioInicial(rs.getInt(10));
+        oferta.setDuracaoHoras(rs.getInt(11));
+        oferta.setSemestre(rs.getString(12));
+        oferta.setCreatedTime(rs.getTimestamp(13).toLocalDateTime());
         oferta.setDisciplinaOfertada(disciplina);
         ofertas.add(oferta);
       }
