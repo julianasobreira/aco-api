@@ -125,4 +125,17 @@ public class DisciplinaRepository {
         throw new java.lang.Error(e);
     }
   }
+
+  public void delete(String curso) {
+    String query = "DELETE FROM disciplinas WHERE disciplinas.ds_nome_curso=?";
+
+    try {
+      PreparedStatement st = con.prepareStatement(query);
+      st.setString(1, curso);
+      st.executeUpdate();
+    } catch (Exception e) {
+      System.out.println(e);
+      throw new java.lang.Error(e);
+    }
+  }
 }

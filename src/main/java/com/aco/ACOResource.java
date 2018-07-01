@@ -251,6 +251,19 @@ public class ACOResource {
         
     }
 
+    @DELETE
+    @Path("/grade")
+    public Response deleteGrade(@QueryParam("curso") String curso) {
+        try {
+            disciplinaRepo.delete(curso);
+            return Response
+               .status(Response.Status.OK)
+               .build();
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GET
     @Path("/oferta")
     public ArrayList<Horario> getOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
