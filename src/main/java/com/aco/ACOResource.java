@@ -28,6 +28,8 @@ import java.net.URLDecoder;
 import com.aco.repositories.*;
 import com.aco.entities.*;
 import com.aco.auth.Secured;
+import com.aco.exception.MyException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @Path("/api/v1.0")
 @Produces(MediaType.APPLICATION_JSON)
@@ -246,9 +248,8 @@ public class ACOResource {
                .status(Response.Status.OK)
                .build();
         } catch (Exception e) {
-            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+          throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
-        
     }
 
     @DELETE

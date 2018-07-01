@@ -1,6 +1,7 @@
 package com.aco.repositories;
 
 import java.sql.*;
+import com.aco.exception.MyException;
 
 public class CursoRepository {
   Connection con = null;
@@ -14,6 +15,7 @@ public class CursoRepository {
        con = DriverManager.getConnection(url, username, password);
     } catch (Exception e) {
       System.out.println(e);
+      throw new java.lang.Error(e);
     }
   }
 

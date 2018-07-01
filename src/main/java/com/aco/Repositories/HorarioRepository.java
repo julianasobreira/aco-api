@@ -6,6 +6,7 @@ import java.util.TimeZone ;
 import java.util.ArrayList;
 import com.aco.entities.Horario;
 import com.aco.entities.Disciplina;
+import com.aco.exception.MyException;
 
 public class HorarioRepository {
   Connection con = null;
@@ -87,6 +88,7 @@ public class HorarioRepository {
       }
     } catch (Exception e) {
       System.out.println(e);
+      throw new java.lang.Error(e);
     }
 
     return ofertas;
