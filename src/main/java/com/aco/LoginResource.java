@@ -35,6 +35,7 @@ import io.jsonwebtoken.Claims;
  */
 @Path("/api/v1.0")
 @Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class LoginResource {
   // Repositórios
   private UsuarioRepository usuarioRepo = new UsuarioRepository();
@@ -43,26 +44,28 @@ public class LoginResource {
   @Path("/login")
   public Response login(Usuario credencial) {
     try {
-      validarCrendenciais(credencial);
-
-      String token = gerarToken(credencial.getEmail(),1);
-      return Response.ok(token).build();
+      Usuario usuario = validarCrendenciais(credencial);
+      String token = gerarToken(usuario.getEmail(),1);
+      usuario.setToken(token);
+      return Response.ok(usuario).build();
     } catch (Exception e) {
       e.printStackTrace();
       return Response.status(Status.UNAUTHORIZED).build();
     }  
   }
 
-  private void validarCrendenciais(Usuario credencial) throws Exception {
+  private Usuario validarCrendenciais(Usuario credencial) throws Exception {
+    String email = credencial.getEmail();
+    String senha = credencial.getSenha();
+    Usuario usuarioInfo = new Usuario();
     try {
-      String email = credencial.getEmail();
-      String senha = credencial.getSenha();
-      Usuario usuarioInfo = usuarioRepo.find(email);
+      usuarioInfo = usuarioRepo.find(email);
       if(!usuarioInfo.getEmail().equals(email) || !usuarioInfo.getSenha().equals(senha))
         throw new Exception("Crendencias não válidas!");
     } catch (Exception e) {
       throw e;
     } 
+    return usuarioInfo;
   }
 
   private String gerarToken(String login,Integer expiraEmDias ) {

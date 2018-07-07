@@ -1,5 +1,4 @@
 #!/bin/bash
-mvn clean package -Dmaven.test.skip=true
 clear
 export DB_URL="mysql://localhost:3306/aco"
 export DB_USER="root"
