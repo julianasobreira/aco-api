@@ -35,7 +35,6 @@ import java.sql.SQLIntegrityConstraintViolationException;
 @Produces(MediaType.APPLICATION_JSON)
 public class ACOResource {
     // Repositórios
-    private static List<Disciplina> resources = new ArrayList<Disciplina>();
     private CursoRepository cursoRepo = new CursoRepository();
     private DisciplinaRepository disciplinaRepo = new DisciplinaRepository();
     private HorarioRepository horarioRepo = new HorarioRepository();

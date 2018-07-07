@@ -21,6 +21,7 @@ import javax.ws.rs.core.Context;
 import java.util.*;
 import java.net.URI;
 import com.aco.entities.*;
+import com.aco.repositories.*;
 import com.google.gson.*;
 import io.jsonwebtoken.SignatureAlgorithm;
 import javax.xml.bind.DatatypeConverter;
@@ -35,14 +36,16 @@ import io.jsonwebtoken.Claims;
 @Path("/api/v1.0")
 @Consumes(MediaType.APPLICATION_JSON)
 public class LoginResource {
-  String FRASE_SEGREDO = "FRASE_SEGREDO";
+  // Repositórios
+  private UsuarioRepository usuarioRepo = new UsuarioRepository();
+
   @POST
   @Path("/login")
-  public Response login(Credential credential) {
+  public Response login(Usuario credencial) {
     try {
-      validarCrendenciais(credential);
+      validarCrendenciais(credencial);
 
-      String token = gerarToken(credential.getLogin(),1);
+      String token = gerarToken(credencial.getEmail(),1);
       return Response.ok(token).build();
     } catch (Exception e) {
       e.printStackTrace();
@@ -50,9 +53,12 @@ public class LoginResource {
     }  
   }
 
-  private void validarCrendenciais(Credential crendencial) throws Exception {
+  private void validarCrendenciais(Usuario credencial) throws Exception {
     try {
-      if(!crendencial.getLogin().equals("teste") || !crendencial.getSenha().equals("123"))
+      String email = credencial.getEmail();
+      String senha = credencial.getSenha();
+      Usuario usuarioInfo = usuarioRepo.find(email);
+      if(!usuarioInfo.getEmail().equals(email) || !usuarioInfo.getSenha().equals(senha))
         throw new Exception("Crendencias não válidas!");
     } catch (Exception e) {
       throw e;
@@ -65,7 +71,7 @@ public class LoginResource {
     Calendar expira = Calendar.getInstance();
     expira.add(Calendar.DAY_OF_MONTH, expiraEmDias);
 
-    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(FRASE_SEGREDO);
+    byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(System.getenv("SECRET_KEY"));
     SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, algoritimoAssinatura.getJcaName());
     JwtBuilder construtor = Jwts.builder()
       .setIssuedAt(agora)
@@ -78,7 +84,7 @@ public class LoginResource {
   public Claims validaToken(String token) {
     try{
       Claims claims = Jwts.parser()
-        .setSigningKey(DatatypeConverter.parseBase64Binary(FRASE_SEGREDO))
+        .setSigningKey(DatatypeConverter.parseBase64Binary(System.getenv("SECRET_KEY")))
         .parseClaimsJws(token).getBody();
         System.out.println(claims.getIssuer());
         return claims;

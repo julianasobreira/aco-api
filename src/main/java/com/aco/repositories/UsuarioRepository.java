@@ -21,8 +21,8 @@ public class UsuarioRepository {
   }
 
   public Usuario find(String email) {
-    String sql = "SELECT usuarios.ds_nome, usuarios.ds_email, usuarios.ds_senha, usuarios.id_curso" +
-                 " FROM usuarios WHERE ds_email=" + email;
+    String sql = "SELECT usuarios.ds_nome, usuarios.ds_email, usuarios.ds_senha, usuarios.id_curso " +
+                 "FROM usuarios WHERE ds_email='" + email + "'";
     Usuario usuarios = new Usuario();
     try {
       Statement st = con.createStatement();
