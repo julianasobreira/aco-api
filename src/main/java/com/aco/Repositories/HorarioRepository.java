@@ -119,7 +119,7 @@ public class HorarioRepository {
   }
 
   public void delete(Integer codCurso, String semestre) {
-    String query = "DELETE FROM ofertas LEFT JOIN disciplinas ON ofertas.id_disciplina=disciplinas.id_disciplina " + 
+    String query = "DELETE ofertas FROM ofertas LEFT JOIN disciplinas ON ofertas.id_disciplina=disciplinas.id_disciplina " + 
                    "WHERE disciplinas.id_curso=? AND ofertas.ds_oferta_semestre=?";
 
     try {
@@ -127,6 +127,9 @@ public class HorarioRepository {
       st.setInt(1, codCurso);
       st.setString(2, semestre);
       st.executeUpdate();
+      System.out.println("==============================");
+      System.out.println(st);
+      System.out.println(query);
     } catch (Exception e) {
       System.out.println(e);
       throw new java.lang.Error(e);
