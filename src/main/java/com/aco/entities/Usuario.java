@@ -15,10 +15,10 @@ import java.util.ArrayList;
 @AllArgsConstructor
 @XmlRootElement
 @ToString(callSuper=true, includeFieldNames=true)
-public class Curso {
+public class Usuario {
+  private Integer idUsuario;
   private String nome;
-  private int id;
-  private ArrayList<Disciplina> disciplinas = new ArrayList<Disciplina>();;
-  private ArrayList<String> semestres = new ArrayList<String>(); 
-  private LocalDateTime createdTime;
+  private String email;
+  private String senha;
+  private Integer codCurso;
 }

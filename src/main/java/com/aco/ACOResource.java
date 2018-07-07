@@ -72,7 +72,7 @@ public class ACOResource {
 
     @POST
     @Path("/solucao")
-    public ArrayList<Horario> getSolucao(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre, ArrayList<Disciplina> cursadas) {   
+    public ArrayList<Horario> getSolucao(@QueryParam("curso") Integer curso, @QueryParam("semestre") String semestre, ArrayList<Disciplina> cursadas) {   
         try {
             int cho = 0;
             disciplinasCursadas = cursadas;
@@ -200,12 +200,22 @@ public class ACOResource {
     }
 
     @GET
+    @Path("/cursos")
+    public ArrayList<Curso> getAllCurso() {
+        try {
+            return cursoRepo.findAll();
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GET
     @Path("/curso")
-    public Response getCurso(@QueryParam("nome") String nome) {
+    public Response getCurso(@QueryParam("curso") Integer codCurso) {
         try {
             Curso curso = new Curso();
-            ArrayList<Disciplina> disciplinas = disciplinaRepo.findAll(nome);
-            ArrayList<String> semestres = horarioRepo.findSemestersByCourse(nome);
+            ArrayList<Disciplina> disciplinas = disciplinaRepo.findAll(codCurso);
+            ArrayList<String> semestres = horarioRepo.findSemestersByCourse(codCurso);
             curso.setSemestres(semestres);
             curso.setDisciplinas(disciplinas);
             return Response
@@ -219,9 +229,9 @@ public class ACOResource {
 
     @GET
     @Path("/grade")
-    public ArrayList<Disciplina> getGrade(@QueryParam("curso") String curso) {
+    public ArrayList<Disciplina> getGrade(@QueryParam("curso") Integer codCurso) {
         try {
-            return disciplinaRepo.findAll(curso);
+            return disciplinaRepo.findAll(codCurso);
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -229,9 +239,10 @@ public class ACOResource {
 
     @POST
     @Path("/grade")
-    public Response createGrade(@QueryParam("curso") String curso, ArrayList<Disciplina> disciplinas) {
+    public Response createGrade(@QueryParam("curso") Integer codCurso, ArrayList<Disciplina> disciplinas) {
         try {
-            ArrayList<Disciplina> grade = disciplinaRepo.findAll(curso);
+            ArrayList<Disciplina> grade = disciplinaRepo.findAll(codCurso);
+            System.out.println(grade);
             if (!grade.isEmpty()) {
                 JSONObject msgError = new JSONObject();
                 msgError.put("code", "409");
@@ -243,7 +254,7 @@ public class ACOResource {
                    .build();
             }
 
-            disciplinaRepo.create(disciplinas, curso);
+            disciplinaRepo.create(disciplinas, codCurso);
             return Response
                .status(Response.Status.OK)
                .build();
@@ -254,9 +265,9 @@ public class ACOResource {
 
     @DELETE
     @Path("/grade")
-    public Response deleteGrade(@QueryParam("curso") String curso) {
+    public Response deleteGrade(@QueryParam("curso") Integer codCurso) {
         try {
-            disciplinaRepo.delete(curso);
+            disciplinaRepo.delete(codCurso);
             return Response
                .status(Response.Status.OK)
                .build();
@@ -267,9 +278,9 @@ public class ACOResource {
 
     @GET
     @Path("/oferta")
-    public ArrayList<Horario> getOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
+    public ArrayList<Horario> getOferta(@QueryParam("curso") Integer codCurso, @QueryParam("semestre") String semestre) {
         try {
-            return horarioRepo.findAll(curso, semestre);
+            return horarioRepo.findAll(codCurso, semestre);
         } catch (Exception e) {
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
@@ -277,9 +288,9 @@ public class ACOResource {
 
     @DELETE
     @Path("/oferta")
-    public Response deleteOferta(@QueryParam("curso") String curso, @QueryParam("semestre") String semestre) {
+    public Response deleteOferta(@QueryParam("curso") Integer codCurso, @QueryParam("semestre") String semestre) {
         try {
-            horarioRepo.delete(curso, semestre);
+            horarioRepo.delete(codCurso, semestre);
             return Response
                .status(Response.Status.OK)
                .build();
@@ -291,10 +302,10 @@ public class ACOResource {
     @POST  
     @Path("/oferta")
     public Response createOferta(@Context UriInfo uriInfo, ArrayList<Horario> ofertas) {
-        String curso = uriInfo.getQueryParameters().getFirst("curso");
+        String codCurso = uriInfo.getQueryParameters().getFirst("curso");
         String semestre = uriInfo.getQueryParameters().getFirst("semestre");
         try {
-            ArrayList<Horario> horarios = horarioRepo.findAll(curso, semestre);
+            ArrayList<Horario> horarios = horarioRepo.findAll(Integer.parseInt(codCurso), semestre);
             if (!horarios.isEmpty()) {
                 JSONObject msgError = new JSONObject();
                 msgError.put("code", "409");
@@ -305,7 +316,7 @@ public class ACOResource {
                    .entity(msgError.toString())
                    .build();
             }
-            horarioRepo.create(ofertas, curso, semestre);
+            horarioRepo.create(ofertas, semestre);
             return Response
                .status(200)
                .build();

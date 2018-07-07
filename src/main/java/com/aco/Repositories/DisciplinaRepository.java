@@ -8,24 +8,24 @@ public class DisciplinaRepository {
   Connection con = null;
 
   public DisciplinaRepository() {
-    String url = "jdbc:" + System.getenv("CLEARDB_DATABASE_URL");
-    String username = System.getenv("DB_USERNAME");
+    String url = "jdbc:" + System.getenv("DB_URL");
+    String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
     try {
       Class.forName("com.mysql.jdbc.Driver");
-       con = DriverManager.getConnection(url, username, password);
+      con = DriverManager.getConnection(url, username, password);
     } catch (Exception e) {
       System.out.println(e);
     }
   }
 
-  public ArrayList<Disciplina> findAll(String curso) {
+  public ArrayList<Disciplina> findAll(Integer codCurso) {
     HashMap<String, Disciplina> disciplinasMap = new HashMap<String, Disciplina>();
-    String sql = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
+    String sql = "SELECT disciplinas.ds_nome, disciplinas.id_curso, disciplinas.nr_carga_horaria, " + 
                  "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
                  "dependencias.ds_tipo, dependencias.id_disciplina_dependencia " +
                  "from disciplinas LEFT JOIN dependencias ON dependencias.id_disciplina=disciplinas.id_disciplina " + 
-                 "WHERE disciplinas.ds_nome_curso='" + curso + "'";
+                 "WHERE disciplinas.id_curso='" + codCurso + "'";
     try { 
       Statement st = con.createStatement();
       ResultSet rs = st.executeQuery(sql);
@@ -36,7 +36,7 @@ public class DisciplinaRepository {
         if (value == null) {
           Disciplina disciplina = new Disciplina();
           disciplina.setNome(rs.getString(1));
-          disciplina.setNomeCurso(rs.getString(2));
+          disciplina.setCodCurso(rs.getInt(2));
           disciplina.setCargaHoraria(rs.getInt(3));
           disciplina.setPeriodo(rs.getInt(4));
           disciplina.setCodDisciplina(codDisciplina);
@@ -66,8 +66,8 @@ public class DisciplinaRepository {
     return disciplinas;
   }
 
-  public void create(ArrayList<Disciplina> disciplinas, String curso) {
-    String sql = "insert into disciplinas (ds_nome, ds_nome_curso, nr_carga_horaria, nr_periodo, id_disciplina, ds_ciclo) " +
+  public void create(ArrayList<Disciplina> disciplinas, Integer codCurso) {
+    String sql = "insert into disciplinas (ds_nome, id_curso, nr_carga_horaria, nr_periodo, id_disciplina, ds_ciclo) " +
                  "values(?, ?, ?, ?, ?, ?)";
     String sqlDepencia = "insert into dependencias (ds_tipo, id_disciplina, id_disciplina_dependencia) " +
                  "values(?, ?, ?)";
@@ -78,7 +78,7 @@ public class DisciplinaRepository {
       // inserir disciplinas
       for (Disciplina disciplina : disciplinas) {
         st.setString(1, disciplina.getNome());
-        st.setString(2, curso);
+        st.setInt(2, codCurso);
         st.setInt(3, disciplina.getCargaHoraria());
         st.setInt(4, disciplina.getPeriodo());
         st.setString(5, disciplina.getCodDisciplina());
@@ -126,12 +126,12 @@ public class DisciplinaRepository {
     }
   }
 
-  public void delete(String curso) {
-    String query = "DELETE FROM disciplinas WHERE disciplinas.ds_nome_curso=?";
+  public void delete(Integer codCurso) {
+    String query = "DELETE FROM disciplinas WHERE disciplinas.id_curso=?";
 
     try {
       PreparedStatement st = con.prepareStatement(query);
-      st.setString(1, curso);
+      st.setInt(1, codCurso);
       st.executeUpdate();
     } catch (Exception e) {
       System.out.println(e);

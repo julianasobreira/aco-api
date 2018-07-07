@@ -20,7 +20,6 @@ public class Horario {
   private String codOferta;
   private Disciplina disciplinaOfertada;
   private String codDisciplina;
-  private String nomeCurso;
   private String dia;
   private String semestre;
   private int horarioInicial;

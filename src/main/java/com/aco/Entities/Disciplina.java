@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class Disciplina {
   private String codDisciplina;
   private String nome;
-  private String nomeCurso;
+  private int codCurso;
   private String ciclo;
   private int cargaHoraria;
   private ArrayList<String> preRequisitos = new ArrayList<String>();

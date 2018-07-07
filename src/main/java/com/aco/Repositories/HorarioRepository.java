@@ -12,20 +12,23 @@ public class HorarioRepository {
   Connection con = null;
 
   public HorarioRepository() {
-    String url = "jdbc:" + System.getenv("CLEARDB_DATABASE_URL");
-    String username = System.getenv("DB_USERNAME");
+    String url = "jdbc:" + System.getenv("DB_URL");
+    String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
     try {
       Class.forName("com.mysql.jdbc.Driver");
-       con = DriverManager.getConnection(url, username, password);
+      con = DriverManager.getConnection(url, username, password);
     } catch (Exception e) {
       System.out.println(e);
     }
   }
 
-  public ArrayList<String> findSemestersByCourse(String curso) {
-    String sql = "SELECT ds_oferta_semestre FROM ofertas WHERE ds_nome_curso='" + curso +
-                "' GROUP BY ds_oferta_semestre";
+  public ArrayList<String> findSemestersByCourse(Integer codCurso) {
+    String sql = "SELECT ofertas.ds_oferta_semestre as ds_oferta_semestre FROM ofertas " +
+                 "LEFT JOIN disciplinas ON ofertas.id_disciplina=disciplinas.id_disciplina " + 
+                 "WHERE disciplinas.id_curso='" + codCurso +
+                 "' GROUP BY ds_oferta_semestre";
+
     try {
       ArrayList<String> semestres = new ArrayList<String>();
       Statement st = con.createStatement();
@@ -40,9 +43,9 @@ public class HorarioRepository {
     }
   }
 
-  public ArrayList<Horario> findAll(String curso, String semestre) {
+  public ArrayList<Horario> findAll(Integer codCurso, String semestre) {
     ArrayList<Horario> ofertas = new ArrayList<Horario>();
-    String query = "SELECT disciplinas.ds_nome, disciplinas.ds_nome_curso, disciplinas.nr_carga_horaria, " + 
+    String query = "SELECT disciplinas.ds_nome, disciplinas.id_curso, disciplinas.nr_carga_horaria, " + 
                    "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
                    "ofertas.cod_oferta, ofertas.id_disciplina, ofertas.ds_dia, " +
                    "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas, ofertas.ds_oferta_semestre, ofertas.created_at " +
@@ -50,15 +53,15 @@ public class HorarioRepository {
                    "ofertas.id_disciplina=disciplinas.id_disciplina ";
     ArrayList<String> conditions = new ArrayList<String>();
 
-    if (curso != null) {
-      conditions.add("disciplinas.ds_nome_curso='" + curso + "'");
+    if (codCurso != null) {
+      conditions.add("disciplinas.id_curso='" + codCurso + "'");
     }
 
     if (semestre != null) {
       conditions.add("ofertas.ds_oferta_semestre='" + semestre + "'");
     }
 
-    if (curso != null || semestre != null) {
+    if (codCurso != null || semestre != null) {
       query = query + "WHERE " + String.join(" AND ", conditions);
     }
 
@@ -68,7 +71,7 @@ public class HorarioRepository {
       while (rs.next()) {
         Disciplina disciplina = new Disciplina();
         disciplina.setNome(rs.getString(1));
-        disciplina.setNomeCurso(rs.getString(2));
+        disciplina.setCodCurso(rs.getInt(2));
         disciplina.setCargaHoraria(rs.getInt(3));
         disciplina.setPeriodo(rs.getInt(4));
         disciplina.setCodDisciplina(rs.getString(5));
@@ -76,7 +79,6 @@ public class HorarioRepository {
 
         Horario oferta = new Horario();
         oferta.setCodOferta(rs.getString(7));
-        oferta.setNomeCurso(rs.getString(2));
         oferta.setCodDisciplina(rs.getString(8));
         oferta.setDia(rs.getString(9));
         oferta.setHorarioInicial(rs.getInt(10));
@@ -94,9 +96,9 @@ public class HorarioRepository {
     return ofertas;
   }
 
-  public void create(ArrayList<Horario> ofertas, String curso, String semestre) {
-    String query = "insert into ofertas (cod_oferta, id_disciplina, ds_dia, ds_oferta_semestre, nr_horario_inicial, nr_duracao_horas, ds_nome_curso) " + 
-    "values(?, ?, ?, ?, ?, ?, ?)";
+  public void create(ArrayList<Horario> ofertas, String semestre) {
+    String query = "INSERT INTO ofertas (cod_oferta, id_disciplina, ds_dia, ds_oferta_semestre, nr_horario_inicial, nr_duracao_horas) " + 
+    "VALUES(?, ?, ?, ?, ?, ?)";
 
     try {
       PreparedStatement st = con.prepareStatement(query);
@@ -108,7 +110,6 @@ public class HorarioRepository {
         st.setString(4, semestre);
         st.setInt(5, oferta.getHorarioInicial());
         st.setInt(6, oferta.getDuracaoHoras());
-        st.setString(7, curso);
         st.executeUpdate();
       }
     } catch (Exception e) {
@@ -117,12 +118,13 @@ public class HorarioRepository {
     }
   }
 
-  public void delete(String curso, String semestre) {
-    String query = "DELETE FROM ofertas WHERE ofertas.ds_nome_curso=? AND ofertas.ds_oferta_semestre=?";
+  public void delete(Integer codCurso, String semestre) {
+    String query = "DELETE FROM ofertas LEFT JOIN disciplinas ON ofertas.id_disciplina=disciplinas.id_disciplina " + 
+                   "WHERE disciplinas.id_curso=? AND ofertas.ds_oferta_semestre=?";
 
     try {
       PreparedStatement st = con.prepareStatement(query);
-      st.setString(1, curso);
+      st.setInt(1, codCurso);
       st.setString(2, semestre);
       st.executeUpdate();
     } catch (Exception e) {
