@@ -8,7 +8,7 @@ public class DisciplinaRepository {
   Connection con = null;
 
   public DisciplinaRepository() {
-    String url = "jdbc:" + System.getenv("DB_URL");
+    String url = "jdbc:mysql://database:3306/aco?autoReconnect=true&useSSL=false";
     String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
     try {

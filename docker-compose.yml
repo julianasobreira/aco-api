@@ -1,0 +1,39 @@
+version: '3'
+services:
+  database:
+    image: mysql
+    container_name: jersey-webservice-db
+    command: mysqld --user=root --verbose
+    restart: always
+    volumes:
+        - ./mysql-dump:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    ports:
+      - "3308:3306"
+    environment:
+      MYSQL_DATABASE: "aco"
+      MYSQL_USER: "test"
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  api:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: jersey-webservice
+    links:
+      - database:database
+    depends_on:
+      - database
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: database
+      DB_USER: "test"
+      DB_PWD: "root"
+      SECRET_KEY: "FRASE_SEGREDO"
+    tty: true
+    restart: always
