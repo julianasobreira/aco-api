@@ -15,7 +15,7 @@ COPY src /opt/app/src
 RUN mvn package
 
 # local application port
-EXPOSE 8080
+EXPOSE 5000
 
 # execute it
 CMD ["mvn", "exec:java"]

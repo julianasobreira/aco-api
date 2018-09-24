@@ -9,7 +9,7 @@ public class CursoRepository {
   Connection con = null;
 
   public CursoRepository() {
-    String url = "jdbc:mysql://database:3306/aco?autoReconnect=true&useSSL=false";
+    String url = "jdbc:mysql://database:3306/aco?autoReconnect=true";
     String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
     try {
