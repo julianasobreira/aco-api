@@ -45,9 +45,10 @@ public class LoginResource {
   public Response login(Usuario credencial) {
     try {
       Usuario usuario = validarCrendenciais(credencial);
-      String token = gerarToken(usuario.getEmail(),1);
-      usuario.setToken(token);
-      return Response.ok(usuario).build();
+      Integer expiraEmDias = 1;
+
+      String token = gerarToken(usuario.getEmail(), usuario.getCodCurso(), expiraEmDias);
+      return Response.ok(token).build();
     } catch (Exception e) {
       e.printStackTrace();
       return Response.status(Status.UNAUTHORIZED).build();
@@ -68,7 +69,7 @@ public class LoginResource {
     return usuarioInfo;
   }
 
-  private String gerarToken(String login,Integer expiraEmDias ) {
+  private String gerarToken(String email, Integer codCurso, Integer expiraEmDias) {
     SignatureAlgorithm algoritimoAssinatura = SignatureAlgorithm.HS512;
     Date agora = new Date();
     Calendar expira = Calendar.getInstance();
@@ -78,7 +79,8 @@ public class LoginResource {
     SecretKeySpec key = new SecretKeySpec(apiKeySecretBytes, algoritimoAssinatura.getJcaName());
     JwtBuilder construtor = Jwts.builder()
       .setIssuedAt(agora)
-      .setIssuer(login)
+      .claim("codCurso", codCurso)
+      .claim("email", email)
       .signWith(algoritimoAssinatura, key)
       .setExpiration(expira.getTime());
     return construtor.compact();//Constrói o token retornando ele como uma String

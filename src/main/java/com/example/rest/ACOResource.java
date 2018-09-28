@@ -27,9 +27,6 @@ import java.net.URLDecoder;
 
 import com.example.rest.repositories.*;
 import com.example.rest.entities.*;
-import com.example.rest.auth.Secured;
-import com.example.rest.exception.MyException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @Path("/api/v1.0")
 @Produces(MediaType.APPLICATION_JSON)
