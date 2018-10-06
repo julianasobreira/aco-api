@@ -36,17 +36,6 @@ public class AntColonyOptimization {
         this.ganho = ganho;
         this.gama = gama;
         this.cargaHorariaOptativaCursada = cargaHorariaOptativaCursada;
-
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@ Atributos: ");
-            for (CompSolucao test : this.grafo) {
-              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDisciplina().getCodDisciplina());
-            }
-
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@ Atributos: " + 
-            " / " + this.feromonioInicial + " / " + this.alfa + " / " + this.beta + " / " +
-            this.quantidadeMaximaIteracoes + " / " + this.quantidadeFormigas + " / " + this.evaporacao + " / " + this.ganho + " / " + this.gama + " / " + this.delta + " / " +
-            this.cargaHorariaOptativaCursada);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }
     public ArrayList < CompSolucao > melhorGrade() {
         ArrayList < CompSolucao > melhorGrade = new ArrayList < CompSolucao > ();
@@ -247,12 +236,6 @@ public class AntColonyOptimization {
         int penCoReq = 0;
         if (!temCoReq) penCoReq = 1500;
         desempenho = cargaHorariaAtingida * alfa + cargaHorariaPosRequisitos * beta - penalidade * delta - optativas * gama - penCoReq;
-        // System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"  + cargaHorariaAtingida  + " | " + alfa + " | " + cargaHorariaAtingida*alfa + " | " +
-        //         cargaHorariaPosRequisitos + " | " + beta + " | " + cargaHorariaPosRequisitos*beta + " | \n" +
-        //         penalidade + " | " + delta + " | " + penalidade*delta + " | \n" +
-        //         optativas + " | " + gama + " | " + optativas*gama + " | \n" +
-        //         penCoReq + " | \n" +
-        //         desempenho + " | \n");
         return desempenho;
     }
     private void removeInfactiveis(CompSolucao solucao) {

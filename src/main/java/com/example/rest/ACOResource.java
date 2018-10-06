@@ -78,41 +78,6 @@ public class ACOResource {
             ofertaDisciplinas = horarioRepo.findAll(curso, semestre);
             ArrayList<Disciplina> disciplinasPossiveis = obterDisciplinasPossiveis();
             ArrayList<Horario> horariosPossiveis = obterHorariosPossiveis(disciplinasPossiveis);
-
-
-
-            System.out.println("-----------------> obterDisciplinasPossiveis: ");
-            for (Disciplina test : obterDisciplinasPossiveis()) {
-              System.out.println("teste: " + test.getCodDisciplina());
-            }
-
-            System.out.println("-----------------> horariosPossiveis: ");
-            for (Horario test : horariosPossiveis) {
-              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDisciplinaOfertada().getCodDisciplina() + " / " +  test.getDisciplinaOfertada().getProRequisitos().size());
-            }
-            
-            System.out.println("-----------------> cargaHorariaCursada: " + cargaHorariaCursada);
-
-            System.out.println("-----------------> ofertaDisciplinas: ");
-            for (Horario test : ofertaDisciplinas) {
-              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDia() + " / " + test.getHorarioInicial() + " / " + test.getDisciplinaOfertada().getCodDisciplina() + " / " +  test.getDisciplinaOfertada().getProRequisitos().size());
-            }
-            
-            
-            System.out.println("-----------------> disciplinasCursadas:");
-            for (Disciplina test : disciplinasCursadas) {
-              System.out.println("teste: " + test.getCodDisciplina());
-            }
-            
-            System.out.println("-----------------> todasDisciplinas: ");
-            for (Disciplina test : todasDisciplinas) {
-              System.out.println("teste: " + test.getCodDisciplina() + " --- " + test.getProRequisitos().size());
-            }
-
-
-
-
-
             
             for(int i=0;i<disciplinasCursadas.size();i++)
                 if(disciplinasCursadas.get(i).getPeriodo() == 0) 
@@ -133,8 +98,6 @@ public class ACOResource {
             );
             solucao = ACO.melhorGrade();
 
-
-            System.out.println("-----------------> !!!!! gerarTabela: ");
             for (CompSolucao test : solucao) {
               System.out.println("teste: " + test.getDisciplina().getCodDisciplina() + " / " + test.getCodOferta());
             }
@@ -204,13 +167,6 @@ public class ACOResource {
             if (discPossivel && !cursada(todasDisciplinas.get(i))) disciplinasPossiveis.add(todasDisciplinas.get(i));
         }
 
-
-        System.out.println("1 ************* -----------------> disciplinasPossiveis: ");
-        for (Disciplina test : disciplinasPossiveis) {
-          System.out.println("teste: " + test.getCodDisciplina());
-        }
-
-
         //CO REQUISITOS
         int size;
         do {
@@ -238,13 +194,6 @@ public class ACOResource {
             }
         } while (size != disciplinasPossiveis.size());
 
-        System.out.println("2 ************* -----------------> disciplinasPossiveis: ");
-        for (Disciplina test : disciplinasPossiveis) {
-          System.out.println("teste: " + test.getCodDisciplina());
-        }
-
-
-        System.out.println("*********** ------------> cargaHorariaCursada: " + cargaHorariaCursada);
         if (cargaHorariaCursada < (cargaHorariaTotal * 0.75)) {
             for (int i = 0; i < disciplinasPossiveis.size(); i++) {
                 if (disciplinasPossiveis.get(i).getCodDisciplina().equals("CCMP0078")) {
