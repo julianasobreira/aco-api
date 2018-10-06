@@ -23,7 +23,7 @@ public class AntColonyOptimization {
     private int ganho;
     private int gama;
     private int cargaHorariaOptativaCursada;
-    public AntColonyOptimization(ArrayList < Horario > horariosPossiveis, ArrayList < Disciplina > todasDisciplinas, int feromonioInicial, int alfa, int beta, int quantidadeMaximaIteracoes, int quantidadeFormigas, int evaporacao, int ganho, int gama, int cargaHorariaOptativaCursada) {
+    public AntColonyOptimization(ArrayList < Horario > horariosPossiveis, ArrayList < Disciplina > todasDisciplinas, int feromonioInicial, int alfa, int beta, int quantidadeMaximaIteracoes, int quantidadeFormigas, int evaporacao, int ganho, int gama, int cargaHorariaOptativaCursada, int delta) {
         this.horariosPossiveis = horariosPossiveis;
         this.todasDisciplinas = todasDisciplinas;
         this.feromonioInicial = feromonioInicial;
@@ -36,6 +36,17 @@ public class AntColonyOptimization {
         this.ganho = ganho;
         this.gama = gama;
         this.cargaHorariaOptativaCursada = cargaHorariaOptativaCursada;
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@ Atributos: ");
+            for (CompSolucao test : this.grafo) {
+              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDisciplina().getCodDisciplina());
+            }
+
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@ Atributos: " + 
+            " / " + this.feromonioInicial + " / " + this.alfa + " / " + this.beta + " / " +
+            this.quantidadeMaximaIteracoes + " / " + this.quantidadeFormigas + " / " + this.evaporacao + " / " + this.ganho + " / " + this.gama + " / " + this.delta + " / " +
+            this.cargaHorariaOptativaCursada);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }
     public ArrayList < CompSolucao > melhorGrade() {
         ArrayList < CompSolucao > melhorGrade = new ArrayList < CompSolucao > ();
@@ -91,7 +102,7 @@ public class AntColonyOptimization {
         } while ( /*melhorou && */ (quantidadeMaximaIteracoes > 0));
         int cht = 0;
         for (int i = 0; i < melhorGrade.size(); i++) cht += melhorGrade.get(i).getDisciplina().getCargaHoraria();
-        System.out.println(cht + " " + funcaoDesempenho(melhorGrade));
+        System.out.println("funcaoDesempenho: " + cht + " " + funcaoDesempenho(melhorGrade));
         return melhorGrade;
     }
     private ArrayList < CompSolucao > obterSolucao(int posicaoInicial) {
@@ -198,11 +209,14 @@ public class AntColonyOptimization {
         int cargaHorariaAtingida = 0;
         int optativas = 0;
         for (int i = 0; i < solucaoEncontrada.size(); i++) cargaHorariaAtingida += solucaoEncontrada.get(i).getDisciplina().getCargaHoraria();
-        for (int i = 0; i < solucaoEncontrada.size(); i++)
+
+        for (int i = 0; i < solucaoEncontrada.size(); i++) {
+            // System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!! ----- " + solucaoEncontrada.size() + " ---- " + solucaoEncontrada.get(i).getDisciplina().getCodDisciplina() + " --- " + solucaoEncontrada.get(i).getDisciplina().getProRequisitos().size());
             for (int j = 0; j < solucaoEncontrada.get(i).getDisciplina().getProRequisitos().size(); j++)
                 for (int k = 0; k < todasDisciplinas.size(); k++)
                     if (todasDisciplinas.get(k).getCodDisciplina().equals(solucaoEncontrada.get(i).getDisciplina().getProRequisitos().get(j)))
                         cargaHorariaPosRequisitos += todasDisciplinas.get(k).getCargaHoraria();
+        }
         int p[] = new int[10];
         for (int i = 0; i < 10; i++)
             p[i] = 0;
@@ -233,6 +247,12 @@ public class AntColonyOptimization {
         int penCoReq = 0;
         if (!temCoReq) penCoReq = 1500;
         desempenho = cargaHorariaAtingida * alfa + cargaHorariaPosRequisitos * beta - penalidade * delta - optativas * gama - penCoReq;
+        // System.out.println("\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\"  + cargaHorariaAtingida  + " | " + alfa + " | " + cargaHorariaAtingida*alfa + " | " +
+        //         cargaHorariaPosRequisitos + " | " + beta + " | " + cargaHorariaPosRequisitos*beta + " | \n" +
+        //         penalidade + " | " + delta + " | " + penalidade*delta + " | \n" +
+        //         optativas + " | " + gama + " | " + optativas*gama + " | \n" +
+        //         penCoReq + " | \n" +
+        //         desempenho + " | \n");
         return desempenho;
     }
     private void removeInfactiveis(CompSolucao solucao) {

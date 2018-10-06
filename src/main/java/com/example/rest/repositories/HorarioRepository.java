@@ -2,6 +2,7 @@ package com.example.rest.repositories;
 
 import java.sql.*;
 import java.time.*;
+import java.util.*;
 import java.util.TimeZone ;
 import java.util.ArrayList;
 import com.example.rest.entities.Horario;
@@ -12,6 +13,8 @@ public class HorarioRepository {
   Connection con = null;
 
   public HorarioRepository() {
+    // String database = System.getenv("DB_DATABASE");
+    // String url = "jdbc:mysql://" + database + ":3306/aco?autoReconnect=true";
     String url = "jdbc:mysql://database:3306/aco?autoReconnect=true";
     String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
@@ -44,13 +47,16 @@ public class HorarioRepository {
   }
 
   public ArrayList<Horario> findAll(Integer codCurso, String semestre) {
-    ArrayList<Horario> ofertas = new ArrayList<Horario>();
+    HashMap<String, Horario> ofertasMap = new HashMap<String, Horario>();
+    HashMap<String, Disciplina> disciplinasMap = new HashMap<String, Disciplina>();
     String query = "SELECT disciplinas.ds_nome, disciplinas.id_curso, disciplinas.nr_carga_horaria, " + 
                    "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
+                   "dependencias.ds_tipo, dependencias.id_disciplina_dependencia, " +
                    "ofertas.cod_oferta, ofertas.id_disciplina, ofertas.ds_dia, " +
                    "ofertas.nr_horario_inicial, ofertas.nr_duracao_horas, ofertas.ds_oferta_semestre, ofertas.created_at " +
-                   "from disciplinas INNER JOIN ofertas ON " + 
-                   "ofertas.id_disciplina=disciplinas.id_disciplina ";
+                   "from disciplinas " +
+                   "INNER JOIN ofertas ON ofertas.id_disciplina=disciplinas.id_disciplina " +
+                   "LEFT JOIN dependencias ON dependencias.id_disciplina=disciplinas.id_disciplina ";
     ArrayList<String> conditions = new ArrayList<String>();
 
     if (codCurso != null) {
@@ -69,30 +75,55 @@ public class HorarioRepository {
       Statement st = con.createStatement();
       ResultSet rs = st.executeQuery(query);
       while (rs.next()) {
-        Disciplina disciplina = new Disciplina();
-        disciplina.setNome(rs.getString(1));
-        disciplina.setCodCurso(rs.getInt(2));
-        disciplina.setCargaHoraria(rs.getInt(3));
-        disciplina.setPeriodo(rs.getInt(4));
-        disciplina.setCodDisciplina(rs.getString(5));
-        disciplina.setCiclo(rs.getString(6));
+        // confere se registro existe
+        String codDisciplina = rs.getString(5);
+        String codOferta = rs.getString(9);
+        String dia = rs.getString(11);
+        String hashCodDisciplina = codDisciplina + codOferta + dia;
+        Disciplina value = disciplinasMap.get(hashCodDisciplina);
+        if (value == null) {
+          Disciplina disciplina = new Disciplina();
+          disciplina.setNome(rs.getString(1));
+          disciplina.setCodCurso(rs.getInt(2));
+          disciplina.setCargaHoraria(rs.getInt(3));
+          disciplina.setPeriodo(rs.getInt(4));
+          disciplina.setCodDisciplina(codDisciplina);
+          disciplina.setCiclo(rs.getString(6));
+          disciplinasMap.put(hashCodDisciplina, disciplina);
+        }
+        String tipoDpendencia = rs.getString(7);
+        String codDisciplinaDependencia = rs.getString(8);
+        if (Objects.equals(tipoDpendencia, "eq")) {
+          disciplinasMap.get(hashCodDisciplina).getEquivalencias().add(codDisciplinaDependencia);
+          disciplinasMap.put(hashCodDisciplina, disciplinasMap.get(hashCodDisciplina));
+        } else if (Objects.equals(tipoDpendencia, "co")) {
+          disciplinasMap.get(hashCodDisciplina).getCoRequisitos().add(codDisciplinaDependencia);
+          disciplinasMap.put(hashCodDisciplina, disciplinasMap.get(hashCodDisciplina));
+        } else if (Objects.equals(tipoDpendencia, "pre")) {
+          disciplinasMap.get(hashCodDisciplina).getPreRequisitos().add(codDisciplinaDependencia);
+          disciplinasMap.put(hashCodDisciplina, disciplinasMap.get(hashCodDisciplina));
+        } else if (Objects.equals(tipoDpendencia, "pro")) {
+          disciplinasMap.get(hashCodDisciplina).getProRequisitos().add(codDisciplinaDependencia);
+          disciplinasMap.put(hashCodDisciplina, disciplinasMap.get(hashCodDisciplina));
+        }   
 
         Horario oferta = new Horario();
-        oferta.setCodOferta(rs.getString(7));
-        oferta.setCodDisciplina(rs.getString(8));
-        oferta.setDia(rs.getString(9));
-        oferta.setHorarioInicial(rs.getInt(10));
-        oferta.setDuracaoHoras(rs.getInt(11));
-        oferta.setSemestre(rs.getString(12));
-        oferta.setCreatedTime(rs.getTimestamp(13).toLocalDateTime());
-        oferta.setDisciplinaOfertada(disciplina);
-        ofertas.add(oferta);
+        oferta.setCodOferta(codOferta);
+        oferta.setCodDisciplina(rs.getString(10));
+        oferta.setDia(dia);
+        oferta.setHorarioInicial(rs.getInt(12));
+        oferta.setDuracaoHoras(rs.getInt(13));
+        oferta.setSemestre(rs.getString(14));
+        oferta.setCreatedTime(rs.getTimestamp(15).toLocalDateTime());
+        oferta.setDisciplinaOfertada(disciplinasMap.get(hashCodDisciplina));
+        ofertasMap.put(codOferta + dia, oferta);
       }
     } catch (Exception e) {
       System.out.println(e);
       throw new java.lang.Error(e);
     }
 
+    ArrayList<Horario> ofertas = new ArrayList<Horario>(ofertasMap.values());
     return ofertas;
   }
 

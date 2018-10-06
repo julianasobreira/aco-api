@@ -8,6 +8,8 @@ public class DisciplinaRepository {
   Connection con = null;
 
   public DisciplinaRepository() {
+    // String database = System.getenv("DB_DATABASE");
+    // String url = "jdbc:mysql://" + database + ":3306/aco?autoReconnect=true";
     String url = "jdbc:mysql://database:3306/aco?autoReconnect=true";
     String username = System.getenv("DB_USER");
     String password = System.getenv("DB_PWD");
@@ -25,7 +27,7 @@ public class DisciplinaRepository {
                  "disciplinas.nr_periodo, disciplinas.id_disciplina, disciplinas.ds_ciclo, " + 
                  "dependencias.ds_tipo, dependencias.id_disciplina_dependencia " +
                  "from disciplinas LEFT JOIN dependencias ON dependencias.id_disciplina=disciplinas.id_disciplina " + 
-                 "WHERE disciplinas.id_curso='" + codCurso + "'";
+                 "WHERE disciplinas.id_curso='" + codCurso + "' order by disciplinas.id_disciplina asc";
     try { 
       Statement st = con.createStatement();
       ResultSet rs = st.executeQuery(sql);
@@ -54,10 +56,10 @@ public class DisciplinaRepository {
         } else if (Objects.equals(tipoDpendencia, "pre")) {
           disciplinasMap.get(codDisciplina).getPreRequisitos().add(codDisciplinaDependencia);
           disciplinasMap.put(codDisciplina, disciplinasMap.get(codDisciplina));
-        } else if (Objects.equals(tipoDpendencia, "eq")) {
+        } else if (Objects.equals(tipoDpendencia, "pro")) {
           disciplinasMap.get(codDisciplina).getProRequisitos().add(codDisciplinaDependencia);
           disciplinasMap.put(codDisciplina, disciplinasMap.get(codDisciplina));
-        }        
+        }   
       }
     } catch (Exception e) {
       System.out.println(e);

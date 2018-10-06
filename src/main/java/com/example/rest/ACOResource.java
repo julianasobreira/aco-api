@@ -45,6 +45,7 @@ public class ACOResource {
     private int evaporacao = 1;
     private int ganho = 1;
     private int gama = 50;
+    private int delta = 50;
     private static int cargaHorariaCursada;
     private static int cargaHorariaTotal = 4290;
     private static ArrayList <Disciplina> disciplinasCursadas = new ArrayList<Disciplina>();
@@ -72,10 +73,47 @@ public class ACOResource {
         try {
             int cho = 0;
             disciplinasCursadas = cursadas;
+            cargaHorariaCursada = getCargaHorariaCursada();
             todasDisciplinas = disciplinaRepo.findAll(curso);
             ofertaDisciplinas = horarioRepo.findAll(curso, semestre);
             ArrayList<Disciplina> disciplinasPossiveis = obterDisciplinasPossiveis();
             ArrayList<Horario> horariosPossiveis = obterHorariosPossiveis(disciplinasPossiveis);
+
+
+
+            System.out.println("-----------------> obterDisciplinasPossiveis: ");
+            for (Disciplina test : obterDisciplinasPossiveis()) {
+              System.out.println("teste: " + test.getCodDisciplina());
+            }
+
+            System.out.println("-----------------> horariosPossiveis: ");
+            for (Horario test : horariosPossiveis) {
+              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDisciplinaOfertada().getCodDisciplina() + " / " +  test.getDisciplinaOfertada().getProRequisitos().size());
+            }
+            
+            System.out.println("-----------------> cargaHorariaCursada: " + cargaHorariaCursada);
+
+            System.out.println("-----------------> ofertaDisciplinas: ");
+            for (Horario test : ofertaDisciplinas) {
+              System.out.println("teste: " + test.getCodOferta() + " / " + test.getDia() + " / " + test.getHorarioInicial() + " / " + test.getDisciplinaOfertada().getCodDisciplina() + " / " +  test.getDisciplinaOfertada().getProRequisitos().size());
+            }
+            
+            
+            System.out.println("-----------------> disciplinasCursadas:");
+            for (Disciplina test : disciplinasCursadas) {
+              System.out.println("teste: " + test.getCodDisciplina());
+            }
+            
+            System.out.println("-----------------> todasDisciplinas: ");
+            for (Disciplina test : todasDisciplinas) {
+              System.out.println("teste: " + test.getCodDisciplina() + " --- " + test.getProRequisitos().size());
+            }
+
+
+
+
+
+            
             for(int i=0;i<disciplinasCursadas.size();i++)
                 if(disciplinasCursadas.get(i).getPeriodo() == 0) 
                     cho+=disciplinasCursadas.get(i).getCargaHoraria();
@@ -90,13 +128,22 @@ public class ACOResource {
                 evaporacao, 
                 ganho, 
                 gama, 
-                cho
+                cho,
+                delta
             );
             solucao = ACO.melhorGrade();
+
+
+            System.out.println("-----------------> !!!!! gerarTabela: ");
+            for (CompSolucao test : solucao) {
+              System.out.println("teste: " + test.getDisciplina().getCodDisciplina() + " / " + test.getCodOferta());
+            }
+
+
             ArrayList<Horario> gradePersonalizada = new ArrayList<Horario>();
             for(CompSolucao solucaoItem : solucao) {
                 for(Horario oferta : ofertaDisciplinas) {
-                    if (solucaoItem.getDisciplina().getCodDisciplina().equals(oferta.getCodDisciplina())) {
+                    if (solucaoItem.getCodOferta().equals(oferta.getCodOferta())) {
                         gradePersonalizada.add(oferta);
                     }
                 }
@@ -156,6 +203,14 @@ public class ACOResource {
             }
             if (discPossivel && !cursada(todasDisciplinas.get(i))) disciplinasPossiveis.add(todasDisciplinas.get(i));
         }
+
+
+        System.out.println("1 ************* -----------------> disciplinasPossiveis: ");
+        for (Disciplina test : disciplinasPossiveis) {
+          System.out.println("teste: " + test.getCodDisciplina());
+        }
+
+
         //CO REQUISITOS
         int size;
         do {
@@ -182,6 +237,14 @@ public class ACOResource {
                 if (!temCoReq) disciplinasPossiveis.remove(disciplinasPossiveis.get(i));
             }
         } while (size != disciplinasPossiveis.size());
+
+        System.out.println("2 ************* -----------------> disciplinasPossiveis: ");
+        for (Disciplina test : disciplinasPossiveis) {
+          System.out.println("teste: " + test.getCodDisciplina());
+        }
+
+
+        System.out.println("*********** ------------> cargaHorariaCursada: " + cargaHorariaCursada);
         if (cargaHorariaCursada < (cargaHorariaTotal * 0.75)) {
             for (int i = 0; i < disciplinasPossiveis.size(); i++) {
                 if (disciplinasPossiveis.get(i).getCodDisciplina().equals("CCMP0078")) {
@@ -233,12 +296,34 @@ public class ACOResource {
         }
     }
 
+    public ArrayList<Disciplina> lerDisciplinas (ArrayList<Disciplina> todasDisciplinas) {
+        for(int i = 0; i < todasDisciplinas.size(); i++) {
+            String cod = todasDisciplinas.get(i).getCodDisciplina();
+            ArrayList<String> pro = new ArrayList<String>();
+            ArrayList<String> queue = new ArrayList<String>();
+            queue.add(cod);
+            while(!queue.isEmpty()) {
+                String codAtual = queue.get(0);
+                queue.remove(codAtual);
+                for(int j = 0; j < todasDisciplinas.size(); j++) {
+                    for(int k = 0; k < todasDisciplinas.get(j).getPreRequisitos().size(); k++) {
+                        if(todasDisciplinas.get(j).getPreRequisitos().get(k).equals(codAtual)) {
+                            queue.add(todasDisciplinas.get(j).getCodDisciplina());
+                            pro.add(todasDisciplinas.get(j).getCodDisciplina());
+                        }
+                    }
+                }
+            }
+            todasDisciplinas.get(i).setProRequisitos(pro);
+        }
+        return todasDisciplinas;
+    }
+
     @POST
     @Path("/grade")
     public Response createGrade(@QueryParam("curso") Integer codCurso, ArrayList<Disciplina> disciplinas) {
         try {
             ArrayList<Disciplina> grade = disciplinaRepo.findAll(codCurso);
-            System.out.println(grade);
             if (!grade.isEmpty()) {
                 JSONObject msgError = new JSONObject();
                 msgError.put("code", "409");
@@ -250,7 +335,8 @@ public class ACOResource {
                    .build();
             }
 
-            disciplinaRepo.create(disciplinas, codCurso);
+            ArrayList<Disciplina> todasDisciplinas = lerDisciplinas(disciplinas);
+            disciplinaRepo.create(todasDisciplinas, codCurso);
             return Response
                .status(Response.Status.OK)
                .build();
